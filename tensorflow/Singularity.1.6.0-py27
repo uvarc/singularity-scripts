@@ -149,4 +149,3 @@ This container is backed by Anaconda version 5.2.0 and provides the Python 2.7 b
     export PATH="$LIGHTGBMROOT:$PATH"
     export PYTHONPATH=$LIGHTGBMROOT/python-package:$PYTHONPATH
 
-
