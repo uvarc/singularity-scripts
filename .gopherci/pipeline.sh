@@ -8,6 +8,7 @@ FailCommand builtin-history "send history $GOPHER_JOB_NAME:$GOPHER_NAMESPACE_EXT
 CHILDREN=*
 
 mkdir -p github
+AddTask ssh-scan github.com
 
 for CHILD in $CHILDREN
 do

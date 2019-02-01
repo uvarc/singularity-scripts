@@ -1,6 +1,6 @@
 #!/bin/bash -e
 
-$REPO=$1
+REPO=$1
 
 echo "Cloning $REPO"
 git clone git@github.com:arcsUVA/$REPO.git github/$REPO
