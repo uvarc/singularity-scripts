@@ -10,4 +10,9 @@ cp -a $REPO/Singularity.* github/$REPO
 cd github/$REPO
 echo "Pushing updates (if any)"
 git add .
-git commit -m "Automated updates from Gir" && git push -u origin master || echo "(no updates)"
+if git commit -m "Automated updates from Gir"
+then
+    git push -u origin master
+else
+    echo "(no updates)"
+fi
