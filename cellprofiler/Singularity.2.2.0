@@ -17,12 +17,13 @@ IncludeCmd: yes
         openjdk-8-jdk      \
         python-dev         \
         python-pip         \
+        python-vigra       \
         python-h5py        \
-        python-matplotlib  \
         python-mysqldb     \
         python-scipy       \
         python-wxgtk3.0    \
         python-zmq         \
+        python-pytest      \
         libcanberra-gtk-module \
         packagekit-gtk3-module
 
@@ -34,7 +35,12 @@ IncludeCmd: yes
     tar xzvf ${TARBALL}
     unset JAVA_TOOL_OPTIONS
     cd CellProfiler-${VERSION}
-    pip install numpy==1.11.0 javabridge==1.0.14
+    # python -m pip install --upgrade pip
+    pip install \
+        numpy==1.12.0 \
+        javabridge==1.0.14 \
+        matplotlib==2.2.3 \
+        Pillow==4.3
     pip install --editable .
     rm /opt/${TARBALL}
 
