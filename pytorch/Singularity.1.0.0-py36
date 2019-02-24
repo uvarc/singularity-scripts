@@ -71,7 +71,7 @@ From: arcsUVA/anaconda:cuda9.0-cudnn7.4-py3.6
         opencv-python
 
     # install pytorch
-    conda install pytorch=1.0 cuda100 torchvision -c pytorch
+    conda install pytorch=1.0 cudatoolkit=9.0 torchvision -c pytorch
 
     conda clean --index-cache --tarballs --packages --yes
 
@@ -86,7 +86,7 @@ This container is backed by Anaconda version 5.2.0 and provides the Python 3.6 b
     * PyTorch 1.0
     * Caffe2
     * OpenCV
-    * CUDA 10.0
+    * CUDA 9.0
     * CuDNN 7.4
 
 %environment
