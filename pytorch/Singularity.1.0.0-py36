@@ -1,5 +1,5 @@
 BootStrap: shub
-From: arcsUVA/anaconda:cuda10.0-cudnn7.4-py3.6
+From: arcsUVA/anaconda:cuda9.0-cudnn7.4-py3.6
 
 
 %post
