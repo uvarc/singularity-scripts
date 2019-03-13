@@ -93,7 +93,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
         pydot
 
     # install tensorflow with gpu support
-    pip install tensorflow-gpu==1.13
+    pip install tensorflow-gpu==1.13.0rc0
 
     # install tflearn
     pip install tflearn
