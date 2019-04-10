@@ -73,7 +73,8 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     pip install tflearn
 
     # install keras
-    pip install keras
+    pip install keras==2.1.5
+    pip install keras-viz
 
     # install pytorch
     conda install pytorch torchvision -c pytorch
@@ -117,6 +118,7 @@ exec python $@
 This container is backed by Anaconda version 4.4.0 and provides the Python 3.6 bindings for:
     * Tensorflow 1.6.0
     * Keras 2.1.5
+    * Keras Visualization Toolkit
     * PyTorch 0.3.1
     * XGBoost
     * LightGBM
