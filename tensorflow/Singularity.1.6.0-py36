@@ -74,7 +74,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
 
     # install keras
     pip install keras==2.1.5
-    pip install keras-viz
+    pip install keras-vis
 
     # install pytorch
     conda install pytorch torchvision -c pytorch
