@@ -94,6 +94,9 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     # install tensorflow with gpu support
     pip install tensorflow-gpu==1.12
 
+    # install Keras Visualization Toolkit
+    pip install keras-vis
+
     # install tflearn
     pip install tflearn
 
@@ -142,6 +145,7 @@ exec python $@
 %help
 This container is backed by Anaconda version 5.2.0 and provides the Python 3.6 bindings for:
     * Tensorflow 1.12.0 with Keras implementation
+    * Keras Visualization Toolkit
     * PyTorch 1.0
     * XGBoost
     * LightGBM
