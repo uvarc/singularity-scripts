@@ -21,7 +21,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
         cuda-cusolver-${CUDA_MAJVERSION}-${CUDA_MINVERSION} \
         cuda-cusparse-${CUDA_MAJVERSION}-${CUDA_MINVERSION} \
         libcudnn7=${CUDNN_VERSION}-1+cuda${CUDA_VERSION} \
-        libcudnn7-dev=${CUDNN_VERSION}-1+cuda{CUDA_VERSION} \
+        libcudnn7-dev=${CUDNN_VERSION}-1+cuda${CUDA_VERSION} \
         libfreetype6-dev \
         libhdf5-serial-dev \
         libpng12-dev \
@@ -80,7 +80,9 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     /bin/bash ~/anaconda.sh -b -p /opt/conda
     rm ~/anaconda.sh
 
-    conda update conda
+    conda update \
+        conda \
+        pandas
     conda install \
         numpy=1.15
 #        pyqt=5.6.0 \
@@ -97,13 +99,13 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     pip install tensorflow-gpu==1.12
 
     # install Keras Visualization Toolkit
-    pip install keras-vis   # requires numpy 1.15
+    pip install keras-vis  # requires numpy 1.15
 
     # install tflearn
     pip install tflearn
 
     # install pytorch
-    conda install pytorch=1.0 cuda${CUDA_MAJVERSION}${CUDA_MINVERSION} torchvision -c pytorch
+    conda install pytorch=1.0 cudatoolkit=${CUDA_MAJVERSION}.${CUDA_MINVERSION} torchvision -c pytorch
 
     # install xgboost
     cd /opt
