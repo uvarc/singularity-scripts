@@ -30,7 +30,8 @@ From: ubuntu:16.04
         libwebp-dev \
         tcl8.6-dev \
         tk8.6-dev \
-        unzip
+        unzip \
+        default-jdk
 
     # install other tools and dependencies
     apt-get -y install --allow-downgrades --no-install-recommends \
@@ -57,9 +58,12 @@ From: ubuntu:16.04
     # install OMERO Python bindings/CLI
     mkdir -p $OMERO_ROOT
     cd $OMERO_ROOT
-    wget http://downloads.openmicroscopy.org/omero/5.4.10/artifacts/OMERO.py-${OMERO_VERSION}.zip -O ./omeropy.zip
+    wget http://downloads.openmicroscopy.org/omero/5.4.10/artifacts/OMERO.server-${OMERO_VERSION}.zip --no-check-certificate -O ./omeropy.zip
     unzip omeropy.zip
-    mv OMERO.py-${OMERO_VERSION} OMERO.py
+    mv OMERO.server-${OMERO_VERSION} OMERO.server
+
+    # clean up to reduce disk space required during installation
+    conda clean --index-cache --tarballs --packages --yes
     rm omeropy.zip
 
 %runscript
@@ -70,7 +74,7 @@ exec python $@
 
 %help
 This container provides the Python 2.7 bindings for:
-    * Omero 5.4.0 (CLI and Client)
+    * Omero 5.4.10 (CLI and Python bindings)
 
 %environment
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -81,5 +85,5 @@ This container provides the Python 2.7 bindings for:
     unset CONDA_DEFAULT_ENV
 
     OMERO_ROOT=/opt/omero
-    export PATH="$OMERO_ROOT/OMERO.py/bin:$PATH"
-    export PYTHONPATH=$OMERO_ROOT/OMERO.py/lib/python:$PYTHONPATH
+    export PATH="$OMERO_ROOT/OMERO.server/bin:$PATH"
+    export PYTHONPATH=$OMERO_ROOT/OMERO.server/lib/python:$PYTHONPATH
