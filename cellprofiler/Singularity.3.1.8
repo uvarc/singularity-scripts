@@ -54,7 +54,8 @@ IncludeCmd: yes
         scikit-learn==0.20.1 \
         scipy==1.1.0 \
         six==1.11.0 \
-        pillow==4.3
+        pillow==4.3 \
+        networkx==2.2 # has to be <2.3 for Python 2.7
 
     pip install --editable .
     rm /opt/${TARBALL}
@@ -68,12 +69,12 @@ IncludeCmd: yes
 
 %help
 This container provides the following applications:
-    * CellProfiler 3.0.0
+    * CellProfiler 3.1.8
     * Python 2.7
     * Java JDK 8
 
 %environment
-    export PATH=/opt/CellProfiler-3.0.0:$PATH
+    export PATH=/opt/CellProfiler-3.1.8:$PATH
     export JAVA_TOOL_OPTIONS="-Xss1280k $JAVA_TOOL_OPTIONS"
     export LC_ALL=C
 
