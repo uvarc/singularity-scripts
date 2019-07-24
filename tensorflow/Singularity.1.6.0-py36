@@ -109,15 +109,3 @@ This container is backed by Anaconda version 4.4.0 and provides the Python 3.6 b
     unset CONDA_DEFAULT_ENV
     export ANACONDA_HOME=/opt/conda
     
-    XGBOOSTROOT=/opt/xgboost
-    export CPATH="$XGBOOSTROOT/include:$CPATH"
-    export LD_LIBRARY_PATH="$XGBOOSTROOT/lib:$LD_LIBRARY_PATH"
-    export PATH="$XGBOOSTROOT:$PATH"
-    export PYTHONPATH=$XGBOOSTROOT/python-package:$PYTHONPATH
-
-    LIGHTGBMROOT=/opt/LightGBM
-    export CPATH="$LIGHTGBMROOT/include:$CPATH"
-    export LD_LIBRARY_PATH="$LIGHTGBMROOT:$LD_LIBRARY_PATH"
-    export PATH="$LIGHTGBMROOT:$PATH"
-    export PYTHONPATH=$LIGHTGBMROOT/python-package:$PYTHONPATH
-
