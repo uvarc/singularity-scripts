@@ -18,7 +18,7 @@ From: r-base:3.6.0
 exec Rscript $@
 
 %help
-This container provides R 3.6.0
+This container provides R 3.6.0.
 
 %environment
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
