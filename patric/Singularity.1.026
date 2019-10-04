@@ -1,102 +1,40 @@
-BootStrap: docker
-From: ubuntu:bionic
-IncludeCmd: yes
+BootStrap: yum
+OSVersion: 7
+MirrorURL: http://mirror.centos.org/centos-%{OSVERSION}/%{OSVERSION}/os/$basearch/
+Include: yum
+
 
 %post
-    # Prerequisites
-    apt-get update
-    apt-get -y install \
-        build-essential \
-        pkg-config \
-        libssl-dev \
-        libexpat1-dev \
-        libreadline-dev \
-        libncurses5-dev \
-        libncursesw5-dev \
-        zlib1g-dev \
-        libdb5.3-dev \
-        nano 
-
-    apt-get install -y \
+    yum -y install \
+        epel-release \
         wget \
-        curl \
-        perl-doc \
-        libdatetime-perl \
-        libgd-perl \
-        alien \
-        rpm 
+        nano
+     
+    yum -y install \
+        perl-REST-Client \
+        perl-AnyEvent \
+        perl-IPC-System-Simple \
+        perl-Spreadsheet-ParseExcel \
+        perl-Spreadsheet-WriteExcel \
+        perl-Math-Round \
+        perl-Crypt-RC4 \
+        perl-Carp-Always \
+        perl-Class-Accessor \
+        perl-Log-Log4perl \
+        perl-Getopt-Long-Descriptive \
+        perl-AnyEvent-HTTP \
+        perl-DateTime-Format-ISO8601 \
+        perl-PDL \
+        perl-SOAP-Lite \
+        perl-Moose \
+        perl-Data-UUID \
+        perl-JSON-Any \
+        perl-Spreadsheet-XLSX \
+        perl-JSON-XS
 
-    # Perl dependencies
-    cpan App::cpanminus
-    #curl -L https://cpanmin.us | perl - --sudo App::cpanminus
-
-    cpanm AnyEvent
-    cpanm AnyEvent::HTTP
-    cpanm Archive::Zip
-    cpanm CGI
-    cpanm Capture::Tiny
-    cpanm Carp
-    cpanm Carp::Always
-    cpanm Class::Accessor
-    cpanm Class::Load
-    cpanm Clone
-    cpanm Config::Simple
-    cpanm Crypt::OpenSSL::RSA
-    cpanm Crypt::RC4
-    cpanm DBI
-    cpanm Data::Dumper
-    cpanm Data::UUID
-    cpanm DateTime
-    cpanm DateTime::Format::ISO8601
-    cpanm Digest::MD5
-    cpanm Encode
-    cpanm Exception::Class
-    cpanm Exporter
-    cpanm File::Copy::Recursive
-    cpanm File::HomeDir
-    cpanm File::Path
-    cpanm File::Slurp
-    cpanm File::Temp
-    cpanm File::Which
-    # cpanm GD
-    cpanm Getopt::Long
-    cpanm Getopt::Long::Descriptive
-    cpanm IO::Socket::SSL
-    cpanm IO::String
-    cpanm IPC::Run
-    cpanm IPC::System::Simple
-    cpanm JSON
-    cpanm JSON::Any
-    cpanm JSON::PP
-    cpanm JSON::XS
-    cpanm Log::Log4perl
-    cpanm Math::Round
-    cpanm Module::Metadata
-    cpanm Moose
-    cpanm PDL
-    cpanm Pod::Usage
-    cpanm REST::Client
-    cpanm SOAP::Lite
-    cpanm Spreadsheet::ParseExcel
-    cpanm Spreadsheet::WriteExcel
-    cpanm Spreadsheet::XLSX
-    cpanm Storable
-    cpanm Text::ParseWords
-    cpanm Time::HiRes
-    cpanm Time::Local
-    cpanm Try::Tiny
-    cpanm URI
-    cpanm XML::LibXML
-    cpanm XML::Simple
-    cpanm YAML
-    cpanm LWP::Protocol::https
-    cpanm Parse::Yapp
-    cpanm List::MoreUtils
-    cpanm Term::ReadKey
-    cpanm DB_File
 
     wget https://github.com/PATRIC3/PATRIC-distribution/releases/download/1.026/patric-cli-1.026-1.el7.x86_64.rpm
-    alien -i patric-cli-1.026-1.el7.x86_64.rpm
+    yum localinstall -y  patric-cli-1.026-1.el7.x86_64.rpm
     
 %runscript
     exec p3-login $@
