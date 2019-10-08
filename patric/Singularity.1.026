@@ -41,7 +41,7 @@ Include: yum
 
 
 %help
-This container provides the PATRIC Command line interface tools:
+This container provides the PATRIC Command line interface tools: 
     * PATRIC 1.026
 
 %environment
