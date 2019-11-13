@@ -4,6 +4,7 @@ IncludeCmd: yes
 	
 %post
 	apt-get upgrade
+	apt-get -y update
 	apt-get -y install software-properties-common
 	add-apt-repository ppa:sumo/stable
 	apt-get -y update
