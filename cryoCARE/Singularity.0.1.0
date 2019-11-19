@@ -54,7 +54,9 @@ From: tensorflow/tensorflow:1.12.0-gpu-py3
     rm -r /IMODtempDir/imod_4.10.16_RHEL6-64_CUDA8.0.tar.gz
 
 	# Install required Python packages
-    pip3 install keras
+	# KHS,RS 11/18/2019: default keras (2.3.1) leads to error in Example 4
+	# AttributeError: module 'tensorflow.python.keras.backend' has no attribute 'get_graph'
+    pip3 install keras==2.2.4
     pip3 install docopt
     pip3 install tifffile
     pip3 install numpy
