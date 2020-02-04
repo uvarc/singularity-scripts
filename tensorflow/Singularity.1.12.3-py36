@@ -22,8 +22,8 @@ From: tensorflow/tensorflow:1.12.3-gpu-py3
         subversion \
         vim \
         nano \
-        cmake \
         libglib2.0-0 \
+        libssl-dev \
         libxext6 \
         libsm6 \
         libxrender1 \
@@ -38,6 +38,16 @@ From: tensorflow/tensorflow:1.12.3-gpu-py3
     # required for LightGBM
     mkdir -p /etc/OpenCL/vendors && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
+
+    # install cmake (xgboost requires >=3.12, but apt-get installs 3.5)
+    wget https://github.com/Kitware/CMake/releases/download/v3.16.3/cmake-3.16.3.tar.gz
+    tar zxf cmake-3.16.3.tar.gz
+    cd cmake-3.16.3
+    ./bootstrap
+    make
+    make install
+    cd ..
+    rm cmake-3.16.3.tar.gz
     
     # install Anaconda
     wget --quiet https://repo.continuum.io/archive/Anaconda3-5.2.0-Linux-x86_64.sh -O ~/anaconda.sh
