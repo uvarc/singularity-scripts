@@ -46,7 +46,7 @@ This container provides the PATRIC Command line interface tools:
 
 %environment
     export LANG=C
-
+    export LC_ALL=C
 
 %labels
     AUTHOR khs3z@virginia.edu

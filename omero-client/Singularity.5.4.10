@@ -52,8 +52,8 @@ From: ubuntu:16.04
     export PATH=/opt/conda/bin:$PATH
     conda install pip
 
-    # install Ice 3.6
-    pip install zeroc-ice==3.6
+    # install Ice 3.7
+    pip install zeroc-ice==3.7.2
 
     # install OMERO.insight
     mkdir -p $OMERO_ROOT
@@ -69,7 +69,7 @@ From: ubuntu:16.04
     mv OMERO.server-${OMERO_VERSION} OMERO.server
 
     # clean up to reduce disk space required during installation
-    conda clean --index-cache --tarballs --packages --yes
+    #conda clean --index-cache --tarballs --packages --yes
     rm omeropy.zip
     rm omero-insight.zip
 
@@ -86,7 +86,6 @@ This container provides the Python 2.7 bindings for:
 %environment
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # This sets global environment variables for anything run within the container
-
     export ANACONDA_HOME=/opt/conda
     export PATH="$ANACONDA_HOME/bin:$PATH"
     unset CONDA_DEFAULT_ENV
@@ -94,3 +93,4 @@ This container provides the Python 2.7 bindings for:
     OMERO_ROOT=/opt/omero
     export PATH="$OMERO_ROOT/OMERO.server/bin:$OMERO_ROOT/OMERO.insight:$PATH"
     export PYTHONPATH=$OMERO_ROOT/OMERO.server/lib/python:$PYTHONPATH
+    export LC_ALL=C

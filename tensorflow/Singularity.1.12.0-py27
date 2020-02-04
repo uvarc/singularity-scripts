@@ -39,14 +39,14 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
         subversion \
         vim \
         nano \
-        cmake \
         bzip2 \
         ca-certificates \
         libglib2.0-0 \
         libxext6 \
         libsm6 \
         libxrender1 \
-        libboost-all-dev
+        libboost-all-dev \
+        libssl-dev
 
     # install TensorRT
     apt-get install nvinfer-runtime-trt-repo-ubuntu1604-5.0.2-ga-cuda${CUDA_VERSION}
@@ -56,6 +56,16 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     apt-get clean
     rm -rf /var/lib/apt/lists/*
 
+    # install cmake (xgboost requires >=3.12, but apt-get installs 3.5)
+    wget https://github.com/Kitware/CMake/releases/download/v3.16.3/cmake-3.16.3.tar.gz
+    tar zxf cmake-3.16.3.tar.gz
+    cd cmake-3.16.3
+    ./bootstrap
+    make
+    make install
+    cd ..
+    rm cmake-3.16.3.tar.gz
+ 
 #    locale-gen en_US
 #    locale-gen en_US.UTF-8
 #    locale update
@@ -69,7 +79,7 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$CUDA_HOME/extras/CUPTI/lib64:$LD_LIBRARY_PATH"
     export PATH="$CUDA_HOME/bin:$PATH"
     export PATH="/opt/conda/bin:$PATH"
- 
+
     # required for LightGBM
     mkdir -p /etc/OpenCL/vendors && \
     echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
@@ -182,3 +192,4 @@ This container is backed by Anaconda version 5.2.0 and provides the Python 3.6 b
     export PATH="$LIGHTGBMROOT:$PATH"
     export PYTHONPATH=$LIGHTGBMROOT/python-package:$PYTHONPATH
 
+    export LC_ALL=C

@@ -9,7 +9,7 @@ IncludeCmd: yes
 
     # R
     export PATH=/opt/conda/bin:$PATH
-    conda install R==3.2.1
+    conda install -c conda-forge r=3.4.1
     pip install numpy==1.5.0
     pip install rpy2==2.6.0
     # conda clean up
@@ -68,7 +68,7 @@ This container provides the following applications:
     * Danpos 2.2.2
     * SAMTools 0.1.7
     * Anaconda 4.4.0 (Python 2.7)
-    * R 3.2.1
+    * R 3.4.1
 
 %environment
     export DANPOS_HOME=/opt/danpos/2.2.2
@@ -78,6 +78,7 @@ This container provides the following applications:
     export PYTHONPATH=${DANPOS_HOME}
     unset CONDA_DEFAULT_ENV
     export ANACONDA_HOME=/opt/conda
+    export LC_ALL=C
 
 %labels
-    AUTHOR khs3z@virginia.edu
+    AUTHOR khs3z@virginia.edu, rs7wz@virginia.edu

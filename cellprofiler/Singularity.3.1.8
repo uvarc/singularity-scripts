@@ -22,7 +22,8 @@ IncludeCmd: yes
         python-zmq         \
         python-pytest      \
         libcanberra-gtk-module \
-        packagekit-gtk3-module
+        packagekit-gtk3-module \
+	libssl-dev
     
     # CellProfiler
     VERSION=3.1.8
@@ -47,7 +48,7 @@ IncludeCmd: yes
         numpy==1.15.4 \
         prokaryote==2.4.1 \
         python-bioformats==1.5.2 \
-        pyzmq==15.3.0 \
+        pyzmq==17.1.2 \
         raven==6.9.0 \
         requests==2.20.1 \
         scikit-image==0.14.0 \
@@ -55,14 +56,16 @@ IncludeCmd: yes
         scipy==1.1.0 \
         six==1.11.0 \
         pillow==4.3 \
-        networkx==2.2 # has to be <2.3 for Python 2.7
+        networkx==2.2 \
+	PyWavelets==1.0.3 \
+	jupyter==1.0 ipykernel==4.8.2 ipython==5.7.0 ipython-genutils==0.2.0 ipywidgets==7.2.1 notebook==5.5.0 \
+	tornado==5.1.1
 
     pip install --editable .
     rm /opt/${TARBALL}
 
-    #pip install \
-    #    javabridge==1.0.14 \
-    #    numpy==1.12
+    # reinstall pyzmq
+    pip install pyzmq==17.1.2
 
 %runscript
     exec cellprofiler
@@ -79,4 +82,4 @@ This container provides the following applications:
     export LC_ALL=C
 
 %labels
-    AUTHOR khs3z@virginia.edu
+    AUTHOR khs3z@virginia.edu, rs7wz@virginia.edu

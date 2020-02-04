@@ -71,31 +71,28 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     rm ~/anaconda.sh
 
     # update basic Anaconda packages
-    conda update conda pandas
+    #conda update conda pandas 
+    conda install -c conda-forge \
+        theano=1.0.4 \
+        pygpu=0.7.6 \
+        keras=2.2.4 \
+        pandas \
+        parameterized \
+        pydot \
+        nose \
+        sphinx \
+        opencv
+
+    conda clean --index-cache --tarballs --packages --yes
+
     pip install --upgrade \
         pip \
         setuptools \
         future
 
-    # install Theano
     pip install \
-        parameterized \
-        pydot \
-        scikit-cuda \
-        nose \
-        sphinx \
-        Theano==1.0.4
-    conda install -c conda-forge \
-        pygpu=0.7.6
-
-    # install Keras and Keras Visualization Toolkit
-    pip install keras==2.2.4    
-    pip install keras-vis
-    
-    # install OpenCV
-    pip install opencv-python
-
-    conda clean --index-cache --tarballs --packages --yes
+        keras-vis \
+        scikit-cuda
 
 
 %runscript
@@ -130,3 +127,4 @@ This container is backed by Anaconda version 5.2.0 and provides the Python 3.6 b
 
     export KERAS_BACKEND=theano
     export THEANO_FLAGS=device=cuda # use cuda device by default
+    export LC_ALL=C
