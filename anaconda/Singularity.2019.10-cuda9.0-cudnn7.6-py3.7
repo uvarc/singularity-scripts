@@ -30,7 +30,6 @@ From: nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
         libboost-all-dev
 
     apt-get clean
-    rm -rf /var/lib/apt/lists/*
 
     rm /etc/machine-id
     dbus-uuidgen --ensure=/etc/machine-id
@@ -41,6 +40,8 @@ From: nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
     rm ~/anaconda.sh
     export PATH=/opt/conda/bin:$PATH
 
+    conda update anaconda
+
     conda install \
         pandas \
         pyqt \
@@ -48,6 +49,8 @@ From: nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
         spyder \
         qtconsole \
         qtpy
+
+    conda clean --all
 
 %runscript
     exec python $@
