@@ -1,11 +1,7 @@
-BootStrap: docker
+Bootstrap: docker
 From: ubuntu:16.04
 
-
 %post
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# this will install all necessary packages and prepare the container
-
     OMERO_VERSION=5.4.10-ice36-b105
     OMERO_ROOT=/opt/omero
 
@@ -50,10 +46,9 @@ From: ubuntu:16.04
     /bin/bash ~/anaconda.sh -b -p /opt/conda
     rm ~/anaconda.sh
     export PATH=/opt/conda/bin:$PATH
-    conda install pip
 
-    # install Ice 3.7
-    pip install zeroc-ice==3.7.2
+    # install Ice 3.6.5
+    conda install -c conda-forge zeroc-ice=3.6.5 ipykernel
 
     # install OMERO.insight
     mkdir -p $OMERO_ROOT
@@ -74,18 +69,13 @@ From: ubuntu:16.04
     rm omero-insight.zip
 
 %runscript
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# this text code will run whenever the container
-# is called as an executable or with `singularity run`
-exec python $@
+    exec python $@
 
 %help
 This container provides the Python 2.7 bindings for:
     * Omero 5.4.10 (CLI and Python bindings)
 
 %environment
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# This sets global environment variables for anything run within the container
     export ANACONDA_HOME=/opt/conda
     export PATH="$ANACONDA_HOME/bin:$PATH"
     unset CONDA_DEFAULT_ENV
@@ -94,3 +84,6 @@ This container provides the Python 2.7 bindings for:
     export PATH="$OMERO_ROOT/OMERO.server/bin:$OMERO_ROOT/OMERO.insight:$PATH"
     export PYTHONPATH=$OMERO_ROOT/OMERO.server/lib/python:$PYTHONPATH
     export LC_ALL=C
+
+%labels
+AUTHOR khs3z@virginia.edu, rs7wz@virginia.edu
