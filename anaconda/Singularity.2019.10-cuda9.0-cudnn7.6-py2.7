@@ -34,13 +34,11 @@ From: nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
     dbus-uuidgen --ensure=/etc/machine-id
 
     # install Anaconda
-    wget --quiet https://repo.continuum.io/archive/Anaconda3-2019.10-Linux-x86_64.sh -O ~/anaconda.sh
+    wget --quiet https://repo.continuum.io/archive/Anaconda2-2019.10-Linux-x86_64.sh -O ~/anaconda.sh
     /bin/bash ~/anaconda.sh -b -p /opt/conda
     rm ~/anaconda.sh
     export PATH=/opt/conda/bin:$PATH
 
-    # downgrade to Python 3.6
-    conda install python=3.6
     conda update anaconda
 
     conda install \
@@ -59,12 +57,14 @@ From: nvidia/cuda:9.0-cudnn7-devel-ubuntu16.04
 
 %help
 Applications and libraries provided by this container:
-    * Anaconda 2019.10, Python 3.6
+    * Anaconda 2019.10, Python 2.7
     * CUDA 9.0
     * CuDNN 7.6.4.38
 
 
 %environment
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# This sets global environment variables for anything run within the container
     export CUDA_HOME="/usr/local/cuda"
     export CPATH="$CUDA_HOME/include:$CPATH"
     export LD_LIBRARY_PATH=$CUDA_HOME/lib64:$CUDA_HOME/extras/CUPTI/lib64:/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/.singularity.d/libs:$LD_LIBRARY_PATH
