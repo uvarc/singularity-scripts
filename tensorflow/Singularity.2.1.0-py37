@@ -41,12 +41,14 @@ From: tensorflow/tensorflow:2.1.0-gpu-py3-jupyter
 
     # install packages
     python3 -m pip install \
+        matplotlib numpy scipy tensorflow-gpu==2.1.0 tensorflow-estimator==2.1.0 tensorboard protobuf \
+        google-auth h5py ipykernel ipywidgets \
         pydot \
-        keras-vis \
-        tflearn \
-        pandas \
-        scikit-learn \
-        opencv-python
+        keras-vis==0.4 \
+        tflearn==0.3.2 \
+        pandas==1.0.0 \
+        scikit-learn==0.22.1 \
+        opencv-python==4.2.0.32
 
 
 %runscript

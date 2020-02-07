@@ -1,476 +1,55 @@
-BootStrap: docker
-From: nvidia/cuda:9.0-devel-ubuntu16.04
-
+BootStrap: library
+From: uvarc/default/anaconda:2019.10-cuda9.0-cudnn7.6-py3.6
 
 %post
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# this will install all necessary packages and prepare the container
-    CUDA_MAJVERSION=9 # as of 2019-01-16 the tensorflow 1.12 wheel is built with cuda 9.0
-    CUDA_MINVERSION=0
-    CUDA_VERSION=${CUDA_MAJVERSION}.${CUDA_MINVERSION}
-    CUDNN_VERSION=7.4.1.5
-    apt-get -y update --fix-missing
+    export CUDA_HOME="/usr/local/cuda"
+    export CPATH="$CUDA_HOME/include:$CPATH"
+    export LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
+    export PATH="/opt/conda/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+    CUDA_VERSION=9.0.176
+    CUDA_MAJVERSION=`echo $CUDA_VERSION | cut -d '.' -f1`
+    CUDA_MINVERSION=`echo $CUDA_VERSION | cut -d '.' -f2`
 
-    # install cuDNN and accessories
-    apt-get install -y --no-install-recommends \
-        build-essential \
-        cuda-command-line-tools-${CUDA_MAJVERSION}-${CUDA_MINVERSION} \
-        cuda-cublas-${CUDA_MAJVERSION}-${CUDA_MINVERSION} \
-        cuda-cufft-${CUDA_MAJVERSION}-${CUDA_MINVERSION} \
-        cuda-curand-${CUDA_MAJVERSION}-${CUDA_MINVERSION} \
-        cuda-cusolver-${CUDA_MAJVERSION}-${CUDA_MINVERSION} \
-        cuda-cusparse-${CUDA_MAJVERSION}-${CUDA_MINVERSION} \
-        libcudnn7=${CUDNN_VERSION}-1+cuda${CUDA_VERSION} \
-        libcudnn7-dev=${CUDNN_VERSION}-1+cuda${CUDA_VERSION} \
-        libfreetype6-dev \
-        libhdf5-serial-dev \
-        libpng12-dev \
-        libzmq3-dev \
-        pkg-config \
-        software-properties-common \
-        unzip
+    apt-get install -y libssl-dev
 
-    # install other tools and dependencies
-    apt-get -y install --allow-downgrades --no-install-recommends \
-        dbus \
-        wget \
-        git \
-        mercurial \
-        subversion \
-        vim \
-        nano \
-        bzip2 \
-        ca-certificates \
-        libglib2.0-0 \
-        libxext6 \
-        libsm6 \
-        libssl-dev \
-        libxrender1 \
-        libboost-all-dev
+    # install TensorRT
+    apt-get install nvinfer-runtime-trt-repo-ubuntu1604-5.0.2-ga-cuda${CUDA_MAJVERSION}.${CUDA_MINVERSION}
+    apt-get update
+    apt-get install -y --no-install-recommends libnvinfer5=5.0.2-1+cuda${CUDA_MAJVERSION}.${CUDA_MINVERSION}
+
+    apt-get clean
 
     # install cmake (xgboost requires >=3.12, but apt-get installs 3.5)
     wget https://github.com/Kitware/CMake/releases/download/v3.16.3/cmake-3.16.3.tar.gz
     tar zxf cmake-3.16.3.tar.gz
     cd cmake-3.16.3
-    ./bootstrap
-    make
-    make install
+    ./bootstrap && make && make install
     cd ..
     rm cmake-3.16.3.tar.gz
-    # install TensorRT
-    apt-get install nvinfer-runtime-trt-repo-ubuntu1604-5.0.2-ga-cuda${CUDA_VERSION}
-    apt-get update
-    apt-get install -y --no-install-recommends libnvinfer5=5.0.2-1+cuda${CUDA_VERSION}
 
-    apt-get clean
-    rm -rf /var/lib/apt/lists/*
-
-#    locale-gen en_US
-#    locale-gen en_US.UTF-8
-#    locale update
-
-#    system-machine-id-setup
-    rm /etc/machine-id
-    dbus-uuidgen --ensure=/etc/machine-id
-
-    export CUDA_HOME="/usr/local/cuda"
-    export CPATH="$CUDA_HOME/include:$CPATH"
-    export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$CUDA_HOME/extras/CUPTI/lib64:$LD_LIBRARY_PATH"
-    export PATH="$CUDA_HOME/bin:$PATH"
-    export PATH="/opt/conda/bin:$PATH"
- 
-    # required for LightGBM
-    mkdir -p /etc/OpenCL/vendors && \
-    echo "libnvidia-opencl.so.1" > /etc/OpenCL/vendors/nvidia.icd
-    
-    export BOOST_ROOT=/usr/local/boost
-
-    wget --quiet https://repo.continuum.io/archive/Anaconda3-5.2.0-Linux-x86_64.sh -O ~/anaconda.sh
-    /bin/bash ~/anaconda.sh -b -p /opt/conda
-    rm ~/anaconda.sh
-
-    #conda update conda
-
+    # install tensorflow
+    conda install -c conda-forge \
+        tensorflow-gpu=1.12.0 \
+        pydot \
+        opencv \
+        setuptools
 
     # install pytorch
-    #conda install pytorch=1.0 torchvision -c pytorch
+    conda install -c pytorch \
+        pytorch=1.0 cudatoolkit=${CUDA_MAJVERSION}.${CUDA_MINVERSION} torchvision 
 
-        #_pytorch_select=0.2 \
-        #_tflow_select=2.1.0 \
+    conda clean --all
 
-    conda install -c conda-forge -c contango \
-        pytorch=1.3.1\
-        cudatoolkit=${CUDA_MAJVERSION}.${CUDA_MINVERSION} \
-        cupti=${CUDA_MAJVERSION}.${CUDA_MINVERSION} \
-        absl-py=0.9.0\
-        alabaster=0.7.12\
-        asn1crypto=1.3.0\
-        astor=0.7.1\
-        astroid=2.3.3\
-        astropy=4.0\
-        atomicwrites=1.3.0\
-        attrs=19.3.0\
-        babel=2.8.0\
-        backcall=0.1.0\
-        backports=1.0\
-        backports.shutil_get_terminal_size=1.0.0\
-        beautifulsoup4=4.8.2\
-        bitarray=1.2.1\
-        bkcharts=0.2\
-        blas=1.0\
-        blaze=0.11.3\
-        bleach=3.1.0\
-        blosc=1.17.1\
-        bokeh=1.4.0\
-        boto=2.49.0\
-        bottleneck=1.3.1\
-        bzip2=1.0.8\
-        c-ares=1.15.0\
-        cairo=1.16.0\
-        cffi=1.13.2\
-        chardet=3.0.4\
-        click=7.0\
-        cloudpickle=1.2.2\
-        clyent=1.2.2\
-        colorama=0.4.3\
-        contextlib2=0.6.0.post1\
-        cryptography=2.8\
-        cudnn=7.6.5 \
-        cycler=0.10.0\
-        cython=0.29.14\
-        cytoolz=0.10.1\
-        dask=2.10.1\
-        dask-core=2.10.1\
-        datashape=0.5.4\
-        dbus=1.13.6\
-        decorator=4.4.1\
-        defusedxml=0.6.0\
-        distributed=2.10.0\
-        docutils=0.16\
-        entrypoints=0.3\
-        et-xmlfile=1.0.1\
-        et_xmlfile=1.0.1\
-        expat=2.2.9\
-        fastcache=1.1.0\
-        ffmpeg=4.1.3\
-        filelock=3.0.10\
-        flask=1.1.1\
-        flask-cors=3.0.8\
-        fontconfig=2.13.1\
-        freetype=2.10.0\
-        fribidi=1.0.5\
-        fsspec=0.6.2\
-        gast=0.3.3\
-        gettext=0.19.8.1\
-        gevent=1.4.0\
-        giflib=5.2.1\
-        glib=2.58.3\
-        glob2=0.7\
-        gmp=6.2.0\
-        gmpy2=2.1.0b1\
-        gnutls=3.6.5\
-        google-pasta=0.1.8\
-        graphite2=1.3.13\
-        graphviz=2.42.3\
-        greenlet=0.4.15\
-        grpcio=1.23.0\
-        gst-plugins-base=1.14.5\
-        gstreamer=1.14.5\
-        h5py=2.10.0\
-        harfbuzz=2.4.0\
-        hdf5=1.10.5\
-        heapdict=1.0.1\
-        html5lib=1.0.1\
-        hypothesis=5.4.0\
-        icu=64.2\
-        idna=2.8\
-        igraph=0.7.1\
-        imageio=2.6.1\
-        imagesize=1.2.0\
-        importlib_metadata=1.5.0\
-        inflect=4.0.0\
-        intel-openmp=2019.4 \
-        ipykernel=5.1.4\
-        ipython=7.11.1\
-        ipython_genutils=0.2.0\
-        ipywidgets=7.5.1\
-        isort=4.3.21\
-        itsdangerous=1.1.0\
-        jaraco.itertools=5.0.0\
-        jasper=1.900.1\
-        jdcal=1.4.1\
-        jedi=0.16.0\
-        jeepney=0.4.2\
-        jinja2=2.11.1\
-        joblib=0.14.1\
-        jpeg=9c\
-        json5=0.9.0\
-        jsonschema=3.2.0\
-        jupyter=1.0.0\
-        jupyter_client=5.3.4\
-        jupyter_console=5.1.0\
-        jupyter_core=4.6.1\
-        jupyterlab=1.2.6\
-        jupyterlab_launcher=0.13.1\
-        jupyterlab_server=1.0.6\
-        keras=2.3.1\
-        keras-applications=1.0.8\
-        keras-preprocessing=1.1.0\
-        keyring=21.1.0\
-        kiwisolver=1.1.0\
-        krb5=1.16.4\
-        lame=3.100\
-        lazy-object-proxy=1.4.3\
-        leidenalg=0.7.0\
-        libblas=3.8.0\
-        libcblas=3.8.0\
-        libclang=9.0.1\
-        libcurl=7.65.3\
-        libgfortran-ng=7.3.0\
-        libgpuarray=0.7.6\
-        libiconv=1.15\
-        liblapack=3.8.0\
-        liblapacke=3.8.0\
-        libllvm8=8.0.1\
-        libllvm9=9.0.1\
-        libopencv=4.2.0\
-        libpng=1.6.37\
-        libprotobuf=3.11.2\
-        libsodium=1.0.17\
-        libssh2=1.8.2\
-        libtiff=4.1.0\
-        libtool=2.4.6\
-        libuuid=2.32.1\
-        libwebp=1.0.2\
-        libxcb=1.13\
-        libxkbcommon=0.9.1\
-        libxml2=2.9.10\
-        libxslt=1.1.33\
-        llvmlite=0.31.0\
-        locket=0.2.0\
-        lxml=4.5.0\
-        lz4-c=1.8.3\
-        lzo=2.10\
-        mako=1.1.0\
-        markdown=3.1.1\
-        markupsafe=1.1.1\
-        matplotlib=3.1.2\
-        matplotlib-base=3.1.2\
-        mccabe=0.6.1\
-        mistune=0.8.4\
-        mkl=2019.4 \
-        mkl-service=2.3.0\
-        mkl_fft=1.1.0\
-        mkl_random=1.1.0\
-        mock=3.0.5\
-        more-itertools=8.2.0\
-        mpc=1.1.0\
-        mpfr=4.0.2\
-        mpmath=1.1.0\
-        msgpack-python=0.6.2\
-        multipledispatch=0.6.0\
-        navigator-updater=0.2.1 \
-        nbconvert=5.6.1\
-        nbformat=5.0.4\
-        nettle=3.4.1\
-        networkx=2.4\
-        ninja=1.10.0\
-        nltk=3.4.4\
-        nose=1.3.7\
-        notebook=6.0.3\
-        nspr=4.24\
-        nss=3.47\
-        numba=0.48.0\
-        numexpr=2.7.1\
-        numpy=1.17.5\
-        numpydoc=0.9.2\
-        odo=0.5.1\
-        olefile=0.46\
-        opencv=4.2.0\
-        openh264=1.8.0\
-        openpyxl=3.0.3\
-        packaging=20.1\
-        pandas=1.0.0\
-        pandoc=2.9.1.1\
-        pandocfilters=1.4.2\
-        pango=1.42.4\
-        parso=0.6.0\
-        partd=1.1.0\
-        path=13.1.0\
-        path.py=12.4.0\
-        pathlib2=2.3.5\
-        patsy=0.5.1\
-        pcre=8.43\
-        pep8=1.7.1\
-        pexpect=4.8.0\
-        pickleshare=0.7.5\
-        pillow=7.0.0\
-        pixman=0.38.0\
-        pkginfo=1.5.0.1\
-        pluggy=0.12.0\
-        ply=3.11\
-        prometheus_client=0.7.1\
-        prompt_toolkit=3.0.3\
-        protobuf=3.11.2\
-        psutil=5.6.7\
-        pthread-stubs=0.4\
-        ptyprocess=0.6.0\
-        py=1.8.1\
-        py-opencv=4.2.0\
-        pycairo=1.19.0\
-        pycodestyle=2.5.0\
-        pycosat=0.6.3\
-        pycparser=2.19\
-        pycrypto=2.6.1\
-        pycurl=7.43.0.5\
-        pydot=1.4.1\
-        pyflakes=2.1.1\
-        pygments=2.5.2\
-        pygpu=0.7.6\
-        pylint=2.4.4\
-        pyodbc=4.0.28\
-        pyopenssl=19.1.0\
-        pyparsing=2.4.6\
-        pyqt=5.12.3\
-        pyrsistent=0.15.7\
-        pysocks=1.7.1\
-        pytables=3.6.1\
-        pytest=5.0.1\
-        pytest-arraydiff=0.3\
-        pytest-astropy=0.7.0\
-        pytest-astropy-header=0.1.2\
-        pytest-doctestplus=0.4.0\
-        pytest-openfiles=0.4.0\
-        pytest-remotedata=0.3.1\
-        python-dateutil=2.8.1\
-        python-igraph=0.7.1.post7\
-        pytz=2019.3\
-        pywavelets=1.1.1\
-        pyyaml=5.3\
-        pyzmq=18.1.1\
-        qt=5.12.5\
-        qtawesome=0.6.1\
-        qtconsole=4.6.0\
-        qtpy=1.9.0\
-        requests=2.22.0\
-        rope=0.16.0\
-        scikit-image=0.16.2\
-        scikit-learn=0.22.1\
-        scipy=1.4.1\
-        seaborn=0.9.0\
-        secretstorage=3.1.2\
-        semver=2.9.0\
-        send2trash=1.5.0\
-        simplegeneric=0.8.1\
-        singledispatch=3.4.0.3\
-        six=1.14.0\
-        snowballstemmer=2.0.0\
-        sortedcollections=1.1.2\
-        sortedcontainers=2.1.0\
-        soupsieve=1.9.4\
-        sphinx=2.3.1\
-        sphinxcontrib-applehelp=1.0.1\
-        sphinxcontrib-devhelp=1.0.1\
-        sphinxcontrib-htmlhelp=1.0.2\
-        sphinxcontrib-jsmath=1.0.1\
-        sphinxcontrib-qthelp=1.0.2\
-        sphinxcontrib-serializinghtml=1.1.3\
-        sphinxcontrib-websupport=1.1.2\
-        spyder=3.3.6\
-        spyder-kernels=0.5.2\
-        spython=0.0.76\
-        sqlalchemy=1.3.13\
-        statsmodels=0.11.0\
-        sympy=1.5.1\
-        tblib=1.6.0\
-        tensorboard=1.14.0\
-        tensorflow=1.14.0 \
-        tensorflow-base=1.14.0 \
-        tensorflow-estimator=1.14.0\
-        tensorflow-gpu=1.14.0 \
-        termcolor=1.1.0\
-        terminado=0.8.3\
-        testpath=0.4.4\
-        tflearn=0.3.2\
-        theano=1.0.3\
-        toolchain=2.4.0-0 \
-        toolchain_c_linux-64=2.4.0-0 \
-        toolchain_cxx_linux-64=2.4.0-0 \
-        toolz=0.10.0\
-        torchvision=0.4.2 \
-        tornado=6.0.3\
-        traitlets=4.3.3\
-        typed-ast=1.4.1\
-        typing=3.6.4\
-        unicodecsv=0.14.1\
-        unixodbc=2.3.7\
-        urllib3=1.25.7\
-        wcwidth=0.1.8\
-        webencodings=0.5.1\
-        werkzeug=0.16.1\
-        widgetsnbextension=3.5.1\
-        wrapt=1.11.2\
-        wurlitzer=2.0.0\
-        x264=1\!152.20180806\
-        xlrd=1.2.0\
-        xlsxwriter=1.2.7\
-        xlwt=1.3.0\
-        xorg-kbproto=1.0.7\
-        xorg-libice=1.0.10\
-        xorg-libsm=1.2.3\
-        xorg-libx11=1.6.9\
-        xorg-libxau=1.0.9\
-        xorg-libxdmcp=1.1.3\
-        xorg-libxext=1.3.4\
-        xorg-libxpm=3.5.13\
-        xorg-libxrender=0.9.10\
-        xorg-libxt=1.1.5\
-        xorg-renderproto=0.11.1\
-        xorg-xextproto=7.3.0\
-        xorg-xproto=7.0.31\
-        yaml=0.2.2\
-        zeromq=4.3.2\
-        zict=1.0.0\
-        zipp=2.1.0\
-        zstd=1.4.4
-
-    conda clean --index-cache --tarballs --packages --yes
-
-    pip install --upgrade \
-        pip \
-        setuptools \
-        future \
-        pydot
-
-    pip install keras-vis
-
-# previous def file (absorbed in conda)
-    # install tensorflow with gpu support
-    #pip install tensorflow-gpu==1.12
-
-    # install Keras Visualization Toolkit
-    #pip install keras-vis  # requires numpy 1.15
-
-    # install tflearn
-    #pip install tflearn
-
-    # install OpenCV
-    #pip install opencv-python
-#
+    pip install \
+        keras-vis \
+        tflearn 
 
     # install xgboost
     cd /opt
-    # wget https://github.com/dmlc/xgboost/archive/v0.80.tar.gz
-    # tar xzf v0.80.tar.gz
-    # rm v0.80.tar.gz
-    # mv xgboost-0.80 xgboost    
     git clone --recursive https://github.com/dmlc/xgboost
     cd xgboost
-    mkdir build
-    cd build
-    cmake .. -DUSE_CUDA=ON
-    make -j4 
-
+    mkdir build && cd build
+    cmake .. -DUSE_CUDA=ON && make -j4 
     cd ../python-package
     python setup.py install
 
@@ -478,22 +57,20 @@ From: nvidia/cuda:9.0-devel-ubuntu16.04
     cd /opt
     git clone --recursive https://github.com/Microsoft/LightGBM
     cd LightGBM
-    mkdir build
-    cd build
+    mkdir build && cd build
     cmake -DUSE_GPU=1 -DOpenCL_LIBRARY=$CUDA_HOME/lib64/libOpenCL.so -DOpenCL_INCLUDE_DIR=$CUDA_HOME/include/ ..
     make -j4
-
     cd ../python-package
     python setup.py install --gpu --precompile
 
+    # delete old help message
+    rm /.singularity.d/runscript.help
+
 %runscript
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# this text code will run whenever the container
-# is called as an executable or with `singularity run`
-exec python $@
+    exec python $@
 
 %help
-This container is backed by Anaconda version 5.2.0 and provides the Python 3.6 bindings for:
+This container is backed by Anaconda version 2019.10 and provides the Python 3.6 bindings for:
     * Tensorflow 1.12.0 with Keras implementation
     * Keras Visualization Toolkit
     * PyTorch 1.0
@@ -501,34 +78,14 @@ This container is backed by Anaconda version 5.2.0 and provides the Python 3.6 b
     * LightGBM
     * OpenCV
     * CUDA 9.0
-    * CuDNN 7.4.1.5
-
+    * CuDNN 7.6.4.38
 
 %environment
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# This sets global environment variables for anything run within the container
     export CUDA_HOME="/usr/local/cuda"
     export CPATH="$CUDA_HOME/include:$CPATH"
-    export LD_LIBRARY_PATH="$CUDA_HOME/lib64:$CUDA_HOME/extras/CUPTI/lib64:$LD_LIBRARY_PATH"
-    export PATH="$CUDA_HOME/bin:$PATH"
-
-    export PATH="/opt/conda/bin:$PATH"
-    unset CONDA_DEFAULT_ENV
-    export ANACONDA_HOME=/opt/conda
-    
-    XGBOOSTROOT=/opt/xgboost
-    export CPATH="$XGBOOSTROOT/include:$CPATH"
-    export LD_LIBRARY_PATH="$XGBOOSTROOT/lib:$LD_LIBRARY_PATH"
-    export PATH="$XGBOOSTROOT:$PATH"
-    export PYTHONPATH=$XGBOOSTROOT/python-package:$PYTHONPATH
-
-    LIGHTGBMROOT=/opt/LightGBM
-    export CPATH="$LIGHTGBMROOT/include:$CPATH"
-    export LD_LIBRARY_PATH="$LIGHTGBMROOT:$LD_LIBRARY_PATH"
-    export PATH="$LIGHTGBMROOT:$PATH"
-    export PYTHONPATH=$LIGHTGBMROOT/python-package:$PYTHONPATH
-
+    export LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
+    export PATH="/opt/conda/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
     export LC_ALL=C
 
 %labels
-AUTHOR khs3z@virginia.edu, rs7wz@virginia.edu
+AUTHOR rs7wz@virginia.edu
