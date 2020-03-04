@@ -2,18 +2,18 @@ BootStrap: docker
 From: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
 
 %post
-    # install other tools
-    apt update && apt-get install -y --no-install-recommends \
-        wget \
-        mercurial \
-        subversion \
-        vim \
-        nano
+    # install dependencies
+    /opt/conda/bin/conda install -c conda-forge sox
+
+    # install official pytorch addon packages
+    /opt/conda/bin/conda install -c pytorch -c gpytorch \
+        torchaudio torchtext==0.4.0 botorch ignite
 
     # install other packages
     /opt/conda/bin/conda install \
         scipy matplotlib pandas==1.0.1 \
         ipykernel ipywidgets
+
     /opt/conda/bin/conda clean --all
 
 %runscript
