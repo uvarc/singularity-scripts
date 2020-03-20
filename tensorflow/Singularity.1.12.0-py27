@@ -1,23 +1,24 @@
-BootStrap: library
-From: uvarc/default/anaconda:2019.10-cuda9.0-cudnn7.6-py2.7
+BootStrap: docker
+From: tensorflow/tensorflow:1.12.0-gpu
 
 %post
     export CUDA_HOME="/usr/local/cuda"
     export CPATH="$CUDA_HOME/include:$CPATH"
-    export LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
-    export PATH="/opt/conda/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
     CUDA_VERSION=9.0.176
     CUDA_MAJVERSION=`echo $CUDA_VERSION | cut -d '.' -f1`
     CUDA_MINVERSION=`echo $CUDA_VERSION | cut -d '.' -f2`
 
-    apt-get install -y libssl-dev
+    pip install keras==2.2.4 pydot opencv-python keras-vis tflearn 
 
-    # install TensorRT
-    apt-get install nvinfer-runtime-trt-repo-ubuntu1604-5.0.2-ga-cuda${CUDA_MAJVERSION}.${CUDA_MINVERSION}
-    apt-get update
-    apt-get install -y --no-install-recommends libnvinfer5=5.0.2-1+cuda${CUDA_MAJVERSION}.${CUDA_MINVERSION}
-
-    apt-get clean
+    apt-get update && apt-get install -y --no-install-recommends \
+        libssl-dev \
+        libxext6 \
+        libsm6 \
+        libssl-dev \
+        libxrender1 \
+        libboost-all-dev \
+        wget git
+    apt-get clean && apt-get autoremove --purge
 
     # install cmake (xgboost requires >=3.12, but apt-get installs 3.5)
     wget https://github.com/Kitware/CMake/releases/download/v3.16.3/cmake-3.16.3.tar.gz
@@ -26,23 +27,6 @@ From: uvarc/default/anaconda:2019.10-cuda9.0-cudnn7.6-py2.7
     ./bootstrap && make && make install
     cd ..
     rm cmake-3.16.3.tar.gz
-
-    # install tensorflow
-    conda install -c conda-forge \
-        tensorflow-gpu=1.12.0 \
-        pydot \
-        opencv \
-        setuptools
-
-    # install pytorch
-    conda install -c pytorch \
-        pytorch=1.0 cudatoolkit=${CUDA_MAJVERSION}.${CUDA_MINVERSION} torchvision 
-
-    conda clean --all
-
-    pip install \
-        keras-vis \
-        tflearn 
 
     # install xgboost v0.82 (final version that supports Python 2.7)
     cd /opt
@@ -63,29 +47,23 @@ From: uvarc/default/anaconda:2019.10-cuda9.0-cudnn7.6-py2.7
     cd ../python-package
     python setup.py install --gpu --precompile
 
-    # delete old help message
-    rm /.singularity.d/runscript.help
-
 %runscript
     exec python $@
 
 %help
-This container is backed by Anaconda version 2019.10 and provides the Python 2.7 bindings for:
+This container provides the Python 2.7 bindings for:
     * Tensorflow 1.12.0 with Keras implementation
     * Keras Visualization Toolkit
-    * PyTorch 1.0
     * XGBoost 0.82
     * LightGBM
     * OpenCV
     * CUDA 9.0
-    * CuDNN 7.6.4.38
-
+    * CuDNN 7.2.1.38
 
 %environment
     export CUDA_HOME="/usr/local/cuda"
     export CPATH="$CUDA_HOME/include:$CPATH"
-    export LD_LIBRARY_PATH="/usr/local/nvidia/lib:/usr/local/nvidia/lib64:/usr/local/cuda/lib64:$LD_LIBRARY_PATH"
-    export PATH="/opt/conda/bin:/usr/local/nvidia/bin:/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
+    export PATH="/usr/local/cuda/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
     export LC_ALL=C
 
 %labels
