@@ -5,10 +5,11 @@ From: ubuntu:16.04
     OMERO_VERSION=5.4.10-ice36-b105
     OMERO_ROOT=/opt/omero
 
-    apt-get -y update --fix-missing
+    # ice36 not found for insight; use ice35 according to https://github.com/ome/openmicroscopy/issues/6233
+    OMERO_VERSION_SUB=5.4.10-ice35-b105
 
     # install cuDNN and accessories
-    apt-get install -y --no-install-recommends \
+    apt-get update && apt-get install -y --no-install-recommends \
         build-essential \
         gcc \
         db5.3-util \
@@ -30,32 +31,35 @@ From: ubuntu:16.04
         default-jdk
 
     # install other tools and dependencies
-    apt-get -y install --allow-downgrades --no-install-recommends \
+    apt-get install -y --allow-downgrades --no-install-recommends \
         dbus \
         wget \
         git \
         mercurial \
         subversion \
         vim \
-        nano \
+        nano
 
-#    dbus-uuidgen --ensure=/etc/machine-id
+    #dbus-uuidgen --ensure=/etc/machine-id
 
-    # install anaconda 
-    wget --no-check-certificate https://repo.continuum.io/archive/Anaconda2-5.2.0-Linux-x86_64.sh -O ~/anaconda.sh
-    /bin/bash ~/anaconda.sh -b -p /opt/conda
-    rm ~/anaconda.sh
+    # install miniconda 
+    wget --no-check-certificate https://repo.anaconda.com/miniconda/Miniconda2-latest-Linux-x86_64.sh -O ~/conda.sh && \
+    /bin/bash ~/conda.sh -b -p /opt/conda && \
+    rm ~/conda.sh
+
     export PATH=/opt/conda/bin:$PATH
 
     # install Ice 3.6.5
-    conda install -c conda-forge zeroc-ice=3.6.5 ipykernel
+    conda install -c conda-forge zeroc-ice=3.6.5 ipykernel numpy
+
+    python -m pip install pillow==6.2.2 opencv-python==4.2.0.32
 
     # install OMERO.insight
     mkdir -p $OMERO_ROOT
     cd $OMERO_ROOT
-    wget https://downloads.openmicroscopy.org/omero/5.4.10/artifacts/OMERO.insight-${OMERO_VERSION}-linux.zip --no-check-certificate -O ./omero-insight.zip
+    wget https://downloads.openmicroscopy.org/omero/5.4.10/artifacts/OMERO.insight-${OMERO_VERSION_SUB}-linux.zip --no-check-certificate -O ./omero-insight.zip
     unzip omero-insight.zip
-    mv OMERO.insight-${OMERO_VERSION}-linux OMERO.insight
+    mv OMERO.insight-${OMERO_VERSION_SUB}-linux OMERO.insight
 
     # install OMERO Python bindings
     cd $OMERO_ROOT
@@ -64,7 +68,7 @@ From: ubuntu:16.04
     mv OMERO.server-${OMERO_VERSION} OMERO.server
 
     # clean up to reduce disk space required during installation
-    #conda clean --index-cache --tarballs --packages --yes
+    conda clean --index-cache --tarballs --packages --yes
     rm omeropy.zip
     rm omero-insight.zip
 

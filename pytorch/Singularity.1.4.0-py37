@@ -20,6 +20,7 @@ From: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
     /opt/conda/bin/conda clean --all
 
     /opt/conda/bin/python -m pip install \
+        pytorch-lightning==0.7.5 \
         scikit-learn==0.22.1 scikit-image==0.16.2 openslide-python==1.1.1 
 
 %runscript
@@ -33,6 +34,7 @@ This container is backed by Anaconda version 2019.10 and provides the Python 3.7
     * Torchaudio 0.4.0
     * BoTorch 0.2.2
     * Ignite 0.3.0
+    * PyTorch Lightning 0.7.5
     * OpenSlide 3.4.1
     * Scikit-learn 0.22.1
     * Scikit-image 0.16.2
