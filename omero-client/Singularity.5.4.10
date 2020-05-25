@@ -1,15 +1,19 @@
 Bootstrap: docker
-From: ubuntu:16.04
+From: ubuntu:18.04
 
 %post
+    # ice36 not found for insight; use ice35 according to https://github.com/ome/openmicroscopy/issues/6233
     OMERO_VERSION=5.4.10-ice36-b105
+    OMERO_VERSION_SUB=5.4.10-ice35-b105
     OMERO_ROOT=/opt/omero
 
-    # ice36 not found for insight; use ice35 according to https://github.com/ome/openmicroscopy/issues/6233
-    OMERO_VERSION_SUB=5.4.10-ice35-b105
+    # install tzdata noninteractively
+    export DEBIAN_FRONTEND=noninteractive
+    ln -fs /usr/share/zoneinfo/America/New_York /etc/localtime
+    apt-get update && apt-get install -y --no-install-recommends tzdata
+    dpkg-reconfigure --frontend noninteractive tzdata
 
-    # install cuDNN and accessories
-    apt-get update && apt-get install -y --no-install-recommends \
+    apt-get install -y --no-install-recommends \
         build-essential \
         gcc \
         db5.3-util \

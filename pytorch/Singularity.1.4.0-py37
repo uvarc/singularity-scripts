@@ -2,9 +2,10 @@ BootStrap: docker
 From: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
 
 %post
-    # openslide
+    # openslide and OpenCV dependencies
     apt-get update && apt-get -y --no-install-recommends --fix-missing install \
-        openslide-tools python3-openslide
+        openslide-tools python3-openslide \
+        libsm6 libxext6 libxrender-dev
     apt-get clean
 
     # pytorch dependency (sox) and other packages
@@ -21,7 +22,7 @@ From: pytorch/pytorch:1.4-cuda10.1-cudnn7-devel
 
     /opt/conda/bin/python -m pip install \
         pytorch-lightning==0.7.5 \
-        scikit-learn==0.22.1 scikit-image==0.16.2 openslide-python==1.1.1 
+        scikit-learn==0.22.1 scikit-image==0.16.2 openslide-python==1.1.1 opencv-python==4.2.0.34
 
 %runscript
     exec python $@
@@ -36,6 +37,7 @@ This container is backed by Anaconda version 2019.10 and provides the Python 3.7
     * Ignite 0.3.0
     * PyTorch Lightning 0.7.5
     * OpenSlide 3.4.1
+    * OpenCV 4.2.0.34
     * Scikit-learn 0.22.1
     * Scikit-image 0.16.2
     * Pandas 1.0.1
