@@ -1,13 +1,14 @@
 Bootstrap: docker
-From: centos:7.7.1908
+From: frolvlad/alpine-glibc
 
 %post
-    curl -o conda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
-    /bin/bash conda.sh -b -p /opt/conda && \
+    apk add --no-cache --virtual .build-dependencies bash
+    wget -O conda.sh https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh && \
+    bash conda.sh -b -p /opt/conda && \
     rm conda.sh
     export PATH=/opt/conda/bin:$PATH
 
-    conda create -y -n anvio python=3.6.10
+    conda create -y -n anvio python=3.6
     source activate anvio
     conda install -y -c conda-forge -c bioconda anvio==6.2 anvio-minimal==6.2=py_1
     source deactivate
@@ -18,7 +19,7 @@ From: centos:7.7.1908
     python $@
 
 %help
-This container is backed by Miniconda and provides the Python 3.6.10 bindings for:
+This container is backed by Miniconda and provides the Python 3.6 bindings for:
     * Anvi'o 6.2
 
 %environment

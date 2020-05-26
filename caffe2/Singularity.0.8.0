@@ -2,8 +2,7 @@ Bootstrap: library
 From: uvarc/default/anaconda:2019.10-cuda9.0-cudnn7.6-py3.6
 
 %post
-    apt-get -y update --fix-missing
-
+    apt-get -y update
     apt-get install -y --no-install-recommends \
         libgoogle-glog-dev \
         libgtest-dev \
@@ -19,36 +18,27 @@ From: uvarc/default/anaconda:2019.10-cuda9.0-cudnn7.6-py3.6
         libgflags-dev
 
     apt-get clean
-    rm -rf /var/lib/apt/lists/*
-
-    /opt/conda/bin/conda install -c caffe2 \
-        caffe2-cuda9.0-cudnn7
 
     /opt/conda/bin/conda install -c conda-forge \
-        numpy \
         protobuf \
         typing \
         hypothesis \
         pydot \
         opencv \
-        pytorch=1.4 \
         cudatoolkit=9.0
 
     /opt/conda/bin/conda install -c pytorch \
+        pytorch=1.0 \
         torchvision
 
-    /opt/conda/bin/conda clean --index-cache --tarballs --packages --yes
-
-    pip install --upgrade \
-        pip \
-        future
+    /opt/conda/bin/conda clean --all
 
 %runscript
     exec python $@
 
 %help
 This container is backed by Anaconda version 2019.10 and provides the Python 3.7 bindings for:
-    * PyTorch 1.4
+    * PyTorch 1.0
     * Caffe2 0.8
     * OpenCV
     * CUDA 9.0
